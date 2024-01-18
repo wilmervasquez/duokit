@@ -1,29 +1,34 @@
-import {namedGroups} from "./namedGroups.js";
+import {namedGroups} from "./utils.js";
 
 class TextNext {
-  constructor(text) {
+  text: string;
+  lastIndex: number;
+  isFinally: boolean;
+  constructor(text: string) {
     this.text = text;
     this.lastIndex = 0;
     this.isFinally = false;
   }
-  next(rule) {
-    rule.lastIndex = this.lastIndex;
-    let result = rule.exec(this.text);
+  next(regexp: RegExp): {} | null {
+    regexp.lastIndex = this.lastIndex;
+    let result = regexp.exec(this.text);
     if (!result) return null;
-    this.lastIndex = rule.lastIndex;
+    this.lastIndex = regexp.lastIndex;
     this.isFinally = this.lastIndex == this.text.length;
     return {...result};
   }
 }
 
 export default class Syntax{
-  constructor(text,rules){
+  parser: TextNext;
+  rules: {};
+  constructor(text:string,rules: {}){
     this.parser = new TextNext(text)   
     this.rules = rules
   }
   compile(){
     let resultado = []
-    let state = ['main'];
+    let state: string[] = ['main'];
     
    
     while(!(this.parser.isFinally)){
