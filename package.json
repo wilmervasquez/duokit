@@ -8,9 +8,9 @@
     "build": "tsc"
   },
   "exports":{
-    "./store": {
-      "types": "./types/index.d.ts",
-      "default": "./src/runtime/store/index.js"
+    "./utils": {
+      "types": "./dist/utils.d.js",
+      "default": "./dist/utils.js"
     }
   },
  
