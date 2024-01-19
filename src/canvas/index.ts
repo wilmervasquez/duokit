@@ -1,10 +1,3 @@
-function getC(enums,num){
-
-  
-}
-getC([1,5,2,6,7,2])
-/** @class */
-
 export class CanvasEditorText {
   constructor(canvas) {
     this.canvas = canvas;
@@ -58,8 +51,8 @@ export class CanvasEditorText {
     });
     window.addEventListener("click", (e) => {
       e.preventDefault();
-      this.caretX = 
-      this.caretY = 
+      // this.caretX = 
+      // this.caretY = 
 
     });
   }
@@ -103,10 +96,20 @@ export class CanvasEditorText {
 }
 
 export class Graphics {
-  constructor(canvasContext2D, canvas) {
+  canvasContext2D: CanvasRenderingContext2D;
+  elementCanvas: HTMLCanvasElement;
+  colors: Record<string,string>;
+  constructor(canvasContext2D:CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     this.canvasContext2D = canvasContext2D;
     this.elementCanvas = canvas;
     this.colors = {};
+  }
+  static get(canvas: HTMLCanvasElement) {
+    const context = canvas.getContext("2d") as CanvasRenderingContext2D;
+
+    context.textBaseline = "top";
+    context.font = "12px Inter";
+    return [canvas, context, new Graphics(context, canvas)];
   }
   clear() {
     this.canvasContext2D.clearRect(
@@ -116,7 +119,7 @@ export class Graphics {
       this.elementCanvas.height
     );
   }
-  fillTextFormat(x, y, textFormat) {
+  fillTextFormat(x: number, y:number, textFormat:Array<{value:string}>) {
     const { canvasContext2D } = this;
     canvasContext2D.fillStyle = "white";
     canvasContext2D.font = "20px MonoLisa";
@@ -127,7 +130,7 @@ export class Graphics {
       wx += canvasContext2D.measureText(value).width;
     }
   }
-  drawRect(x, y, w, h, config) {
+  drawRect(x:number, y:number, w:number, h:number, config) {
     let { bgColor, borderColor, borderWidth } = config;
     this.canvasContext2D.fillStyle = bgColor;
     this.canvasContext2D.fillRect(x, y, w, h);
@@ -136,7 +139,7 @@ export class Graphics {
     this.canvasContext2D.strokeRect(x, y, w, h);
   }
 
-  drawGrid(x, y, w, h, gap, config) {
+  drawGrid(x:number, y:number, w:number, h:number, gap:number, config) {
     let { bWidth, lineColor } = config;
     this.canvasContext2D.lineWidth = bWidth ?? 1;
     this.canvasContext2D.strokeStyle = lineColor;
@@ -403,11 +406,5 @@ export class Graphics {
     }
     return mapColors;
   }
-  static get(canvas) {
-    const context = canvas.getContext("2d");
-
-    context.textBaseline = "top";
-    context.font = "12px Inter";
-    return [canvas, context, new Graphics(context, canvas)];
-  }
+ 
 }

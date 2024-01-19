@@ -3,19 +3,19 @@ import { namedGroupsy } from "../utils/index";
 class TextNext {
   text: string;
   lastIndex: number;
-  isFinally: boolean;
+  isEndOfText: boolean;
   constructor(text: string) {
     this.text = text;
     this.lastIndex = 0;
-    this.isFinally = false;
+    this.isEndOfText = false;
   }
-  next(stringRegex: string): RegExpExecArray | null {
-    const captureRegex = new RegExp(stringRegex, "dy");
-    captureRegex.lastIndex = this.lastIndex;
-    let result = captureRegex.exec(this.text);
+  next(regexp: string | RegExp): RegExpExecArray | null {
+    const searchRegex = new RegExp(regexp, "dy");
+    searchRegex.lastIndex = this.lastIndex;
+    const result = searchRegex.exec(this.text);
     if (!result) return null;
-    this.lastIndex = captureRegex.lastIndex;
-    this.isFinally = this.lastIndex == this.text.length;
+    this.lastIndex = searchRegex.lastIndex;
+    this.isEndOfText = this.lastIndex == this.text.length;
     return result;
   }
 }
@@ -31,7 +31,7 @@ export default class Syntax {
     let resultado = [];
     let state: string[] = ["main"];
 
-    while (!this.parser.isFinally) {
+    while (!this.parser.isEndOfText) {
       let se = false;
 
       for (let { match, name } of this.rules[state[0]]) {

@@ -7,13 +7,12 @@
   "scripts": {
     "build": "tsc"
   },
-  "exports":{
+  "exports": {
     "./utils": {
       "types": "./dist/utils.d.js",
       "default": "./dist/utils.js"
     }
   },
- 
   "files": [
     "dist/",
     "package.json",
@@ -21,5 +20,8 @@
   ],
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.5"
+  }
 }
