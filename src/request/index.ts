@@ -1,5 +1,6 @@
 class Ajax {
-  constructor(url, { events, method, responseType }) {
+  solicitud: XMLHttpRequest;
+  constructor(url: string, { events, method, responseType }) {
     this.solicitud = new XMLHttpRequest();
     this.solicitud.responseType = responseType;
     this.solicitud.open(method, props.url);
@@ -52,4 +53,11 @@ class Ajax {
   }
 }
 
-
+export async function fetchJSON(url: string) {
+  const response = await fetch(url);
+  if (!response.ok) {
+    return { data: null, error: true };
+  }
+  const data = await response.json();
+  return { data: data, error: false };
+}

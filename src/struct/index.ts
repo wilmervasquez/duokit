@@ -1,9 +1,8 @@
 class Stringf {
-  static separateQuotes(text) {
-    /** @return {Array} */
+  static separateQuotes(text: string) {
     let r = "",
       comilla = false,
-      separateComilla = [];
+      separateComilla: string[] = [];
 
     let code = [...text];
     code.forEach((leter, index) => {
@@ -35,8 +34,8 @@ class Stringf {
     });
     return separateComilla;
   }
-  static concatZ(init, ...vars) {
-    init = [...init];
+  static concatZ(initn:string, ...vars:string[]) {
+    let init = [...initn];
     let value = "";
     let cont = 0;
 
@@ -44,28 +43,44 @@ class Stringf {
       if (init[i] == "#") {
         value += vars[cont];
         cont++;
-        continue
+        continue;
       }
       value += init[i];
     }
     return value;
   }
-  static format = function (init,...vars) {
-    init=[...init]
-    let value = ""
-    let cont=0
-  
+  static format = function (initn:string, ...vars:string[]) {
+    let init = [...initn];
+    let value = "";
+    let cont = 0;
+
     for (let i = 0; i < init.length; i++) {
-      if (init[i]=="#") {
-        value+=vars[0]
-        cont++
+      if (init[i] == "#") {
+        value += vars[0];
+        cont++;
       }
-      value+=init[i]
+      value += init[i];
     }
-    return value
+    return value;
+  };
+  static concat(string = "", data:Record<string,string> = {}) {
+    let format = string.replace(/(?:{(.+?)})/g, (x) => data[x.slice(1, -1)]);
+    return format;
   }
-  static concat(string="",data={}){
-    let format = string.replace(/(?:{(.+?)})/g,(x)=> data[x.slice(1,-1)]);
-    return format
+}
+class ArrayList {
+  static frecuencies(...array: any[]) {
+    return array.reduce((a, b) => {
+      a[b] = a[b] ? a[b] + 1 : 1;
+      return a;
+    }, {});
+  }
+
+  static unic(...array:any[]) {
+    return [...new Set(array)];
+  }
+
+  static shuffle(...array:any[]) {
+    return array.sort(() => Math.random() - 0.5);
   }
 }
