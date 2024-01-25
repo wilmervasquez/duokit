@@ -1,104 +1,9 @@
-export class CanvasEditorText {
-  constructor(canvas) {
-    this.canvas = canvas;
-    this.ctx = canvas.getContext("2d");
-    this.ctx.fillStyle = "white";
-    this.ctx.font = "20px MonoLisa";
-    this.ctx.textBaseline = "top"; // handings, middle, alphabetic
-    this.ctx.font = "20px MonoLisa";
-    this.lineHeight = 24;
-    this.x = 20;
-    this.y = 20;
-    this.editorWidth = this.canvas.width - this.x * 2;
-    this.text = "";
-    this.px = []
-    this.py = []
-
-    this.caretX = 0;
-    this.caretY = 0;
-    this.caretXR = 0;
-    this.caretYR = 0;
-
-    this.caretVisible = 0;
-    const render = () => {
-      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-      this.drawText();
-      this.drawCaret()
-      // requestAnimationFrame(render);
-    };
-    render();
-    window.addEventListener("keydown", (e) => {
-      this.caretX = this.caretXR
-      this.caretY = this.caretYR
-      e.preventDefault();
-      console.log(e.keyCode);
-      switch (e.keyCode) {
-        case 8:
-          this.text = this.text.substring(0, this.text.length - 1);
-          break;
-        case 13:
-          this.text += "\n";
-          break;
-        case 9:
-          this.text += "  ";
-          break;
-        default:
-          this.text += e.key;
-          break;
-      }
-    this.caretVisible = !this.caretVisible;
-
-    });
-    window.addEventListener("click", (e) => {
-      e.preventDefault();
-      // this.caretX = 
-      // this.caretY = 
-
-    });
-  }
-  drawText() {
-    let cx = []
-    let cy = []
-    let { x, y, canvas, lineHeight, editorWidth, text } = this;
-    let wx = 0;
-
-    for (const letter of text) {
-      if (letter == "\n") {
-        wx = 0;
-        y += lineHeight;
-        continue;
-      }
-      if (wx >= editorWidth) {
-        wx = 0;
-        y += lineHeight;
-      }
-      this.ctx.fillText(letter, x + wx, y);
-      wx += this.ctx.measureText(letter).width;
-      cx.push(x+wx)
-      cx.push(y)
-    }
-    this.px=cx
-    this.py=cy
-
-    this.caretXR = x+wx;
-    this.caretYR = y;
-  }
-  drawCaret(){
-    // this.ctx.globalAlpha = this.caretVisible;
-    // this.caretVisible += 0.555
-    // if (this.caretVisible >= 1) {
-    //   this.caretVisible = 0;
-    // }
-    this.ctx.fillRect(this.caretX, this.caretY, 3,20);
-    // this.ctx.globalAlpha = 1;
-      
-  }
-}
+import { hslToHex, rgbaToHex } from "../color/index.js";
 
 export class Graphics {
   canvasContext2D: CanvasRenderingContext2D;
   elementCanvas: HTMLCanvasElement;
-  colors: Record<string,string>;
+  colors: Record<string,CanvasGradient>;
   constructor(canvasContext2D:CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     this.canvasContext2D = canvasContext2D;
     this.elementCanvas = canvas;
@@ -130,7 +35,7 @@ export class Graphics {
       wx += canvasContext2D.measureText(value).width;
     }
   }
-  drawRect(x:number, y:number, w:number, h:number, config) {
+  drawRect(x:number, y:number, w:number, h:number, config:{bgColor:string, borderColor:string, borderWidth:number }) {
     let { bgColor, borderColor, borderWidth } = config;
     this.canvasContext2D.fillStyle = bgColor;
     this.canvasContext2D.fillRect(x, y, w, h);
@@ -139,7 +44,7 @@ export class Graphics {
     this.canvasContext2D.strokeRect(x, y, w, h);
   }
 
-  drawGrid(x:number, y:number, w:number, h:number, gap:number, config) {
+  drawGrid(x:number, y:number, w:number, h:number, gap:number, config:{bWidth:number,lineColor:string}) {
     let { bWidth, lineColor } = config;
     this.canvasContext2D.lineWidth = bWidth ?? 1;
     this.canvasContext2D.strokeStyle = lineColor;
@@ -159,13 +64,13 @@ export class Graphics {
     this.canvasContext2D.textAlign = "center";
     this.canvasContext2D.font = "8px Innter";
     for (let i = 0; i < w; i += gap) {
-      this.canvasContext2D.fillText(i, i, gap / 2);
+      this.canvasContext2D.fillText(i.toString(), i, gap / 2);
     }
     for (let i = 0; i < h; i += gap) {
-      this.canvasContext2D.fillText(i, gap / 2, i);
+      this.canvasContext2D.fillText(i.toString(), gap / 2, i);
     }
   }
-  drawRoundRect(x, y, w, h, round, config = {}) {
+  drawRoundRect(x:number, y:number, w:number, h:number, round:number, config:{color:string}) {
     if (round > w / 2 || round > h / 2) {
       round = w / 2 > h / 2 ? h / 2 : w / 2;
     }
@@ -207,7 +112,7 @@ export class Graphics {
     this.canvasContext2D.closePath();
     this.canvasContext2D.stroke();
   }
-  fillRoundRect(x, y, w, h, round, config = {}) {
+  fillRoundRect(x:number, y:number, w:number, h:number, round:number, config:{color:string}) {
     if (round > w / 2 || round > h / 2) {
       round = w / 2 > h / 2 ? h / 2 : w / 2;
     }
@@ -249,10 +154,10 @@ export class Graphics {
     this.canvasContext2D.closePath();
     this.canvasContext2D.fill();
   }
-  drawImage(img, x, y, w) {
+  drawImage(img:HTMLImageElement, x:number, y:number, w:number) {
     this.canvasContext2D.drawImage(img, x, y, w, (img.height / img.width) * w);
   }
-  drawCircle(x, y, r) {
+  drawCircle(x:number, y:number, r:number) {
     this.canvasContext2D.beginPath();
     this.canvasContext2D.arc(
       x,
@@ -264,7 +169,7 @@ export class Graphics {
     );
     this.canvasContext2D.stroke();
   }
-  fillCircle(x, y, r) {
+  fillCircle(x:number, y:number, r:number) {
     this.canvasContext2D.beginPath();
     this.canvasContext2D.arc(
       x,
@@ -276,22 +181,22 @@ export class Graphics {
     );
     this.canvasContext2D.fill();
   }
-  createLinearGradient(x1, y1, x2, y2, prop = [], name) {
-    let gradiende = this.canvasContext2D.createLinearGradient(0, 0, 0, 200);
+  createLinearGradient(x1:number, y1:number, x2:number, y2:number, prop: [number,string][], name:string) {
+    let gradiende = this.canvasContext2D.createLinearGradient(x1,y1,x2,y2);
     for (const [exp, color] of prop) {
       gradiende.addColorStop(exp, color);
     }
     this.colors[name] = gradiende;
   }
 
-  setShadow(x, y, blur, color) {
+  setShadow(x:number, y:number, blur:number, color:string) {
     this.canvasContext2D.shadowColor = color || "gray";
     this.canvasContext2D.shadowOffsetX = x;
     this.canvasContext2D.shadowOffsetY = y;
     this.canvasContext2D.shadowBlur = blur;
   }
 
-  fillCirclex(x, y, w, h, br, color) {
+  fillCirclex(x:number, y:number, w:number, h:number, br:number, color:string) {
     let refBr = 2.6;
     this.canvasContext2D.fillStyle = color ?? "white";
     this.canvasContext2D.beginPath();
@@ -334,17 +239,17 @@ export class Graphics {
     );
     this.canvasContext2D.fill();
   }
-  drawLine(i1, i2, f1, f2) {
+  drawLine(i1:number, i2:number, f1:number, f2:number) {
     this.canvasContext2D.strokeStyle = "white";
     this.canvasContext2D.beginPath();
     this.canvasContext2D.moveTo(i1, i2);
     this.canvasContext2D.lineTo(f1, f2);
     this.canvasContext2D.stroke();
   }
-  static color(h, s, l) {
-    return Color.HSLToHexadecimal(h, s, l);
+  static color(h:number, s:number, l:number) {
+    return hslToHex(h, s, l);
   }
-  drawGraphicLine(x, y, w, h, dats) {
+  drawGraphicLine(x:number, y:number, w:number, h:number, dats:any[]) {
     let mayor = 0;
     let gapY = Math.max(...dats.map((row) => Math.max(...row)));
 
@@ -368,7 +273,7 @@ export class Graphics {
 
       this.canvasContext2D.beginPath();
 
-      row.forEach((column, i) => {
+      row.forEach((column:number, i:number) => {
         if (i == 0) {
           this.canvasContext2D.moveTo(i * gapX + x, h + y - column * gapY);
         }
@@ -382,21 +287,23 @@ export class Graphics {
         100,
         50
       );
-      row.forEach((column, i) => {
+      row.forEach((column:number, i:number) => {
         this.fillCircle(i * gapX + x, h + y - column * gapY, 3);
       });
     });
   }
-  getImageDate(x, y, w, h) {
+  getImageDate(x:number, y:number, w:number, h:number) {
     let mapColors = [];
     let imgData = this.canvasContext2D.getImageData(x, y, w, h);
     let reserva = [];
     for (let a = 0; a < imgData.data.length; a += 4) {
       reserva.push(
-        Color.rgbaToHexadecimal(
+
+        rgbaToHex(
           imgData.data[a],
           imgData.data[a + 1],
-          imgData.data[a + 2]
+          imgData.data[a + 2],
+          1
         )
       );
       if (a % (imgData.width * 4) == 0) {

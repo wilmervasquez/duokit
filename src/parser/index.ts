@@ -1,4 +1,4 @@
-import { namedGroupsy } from "../utils/index";
+import { namedGroupsy } from "../utils/index.js";
 
 class TextNext {
   text: string;

@@ -1,27 +1,57 @@
 {
   "name": "duokit",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "",
   "type": "module",
   "module": "dist/index.js",
   "main": "dist/index.js",
   "types": "types/index.d.ts",
   "scripts": {
-    "build": "tsc --declaration --declarationDir ./types"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "group": "node moduleDeclarationGrouper.js",
+    "bg": "npm run build && npm run group",
+    "config": "node duokit.config.js"
   },
   "exports": {
-    "./package.json": "./package.json",
     ".": {
-      "types": "./types/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./utils": {
-      "types": "./types/index.d.ts",
-      "default": "./dist/utils.js"
+    "./canvas": {
+      "default": "./dist/canvas/index.js"
     },
     "./color": {
-      "types": "./types/index.d.ts",
       "default": "./dist/color/index.js"
+    },
+    "./doc": {
+      "default": "./dist/doc/index.js"
+    },
+    "./file": {
+      "default": "./dist/file/index.js"
+    },
+    "./math": {
+      "default": "./dist/math/index.js"
+    },
+    "./mdx": {
+      "default": "./dist/mdx/index.js"
+    },
+    "./parser": {
+      "default": "./dist/parser/index.js"
+    },
+    "./rand": {
+      "default": "./dist/rand/index.js"
+    },
+    "./request": {
+      "default": "./dist/request/index.js"
+    },
+    "./server": {
+      "default": "./dist/server/index.js"
+    },
+    "./struct": {
+      "default": "./dist/struct/index.js"
+    },
+    "./utils": {
+      "default": "./dist/utils/index.js"
     }
   },
   "files": [
