@@ -1,6 +1,6 @@
 {
   "name": "duokit",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "",
   "type": "module",
   "module": "dist/index.js",
@@ -19,9 +19,9 @@
       "types": "./types/index.d.ts",
       "default": "./dist/utils.js"
     },
-    "./color":{
+    "./color": {
       "types": "./types/index.d.ts",
-      "default":"./dist/color/index.js"
+      "default": "./dist/color/index.js"
     }
   },
   "files": [
