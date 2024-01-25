@@ -1,25 +1,37 @@
 {
   "name": "duokit",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "",
-  "main": "dist/index.js",
   "type": "module",
+  "module": "dist/index.js",
+  "main": "dist/index.js",
+  "types": "types/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc --declaration --declarationDir ./types"
   },
   "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./types/index.d.ts",
+      "default": "./dist/index.js"
+    },
     "./utils": {
-      "types": "./dist/utils.d.js",
+      "types": "./types/index.d.ts",
       "default": "./dist/utils.js"
+    },
+    "./color":{
+      "types": "./types/index.d.ts",
+      "default":"./dist/color/index.js"
     }
   },
   "files": [
     "dist/",
+    "types/index.d.ts",
     "package.json",
     "README.md"
   ],
   "keywords": [],
-  "author": "",
+  "author": "Wilmer Vasquez",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.11.5"

@@ -11,7 +11,7 @@ export function hsl(h = 0, s = 100, l = 50) {
   return `hsl(${h}, ${s}%,${l}%)`;
 }
 
-export function RGBToHSL(r:number, g:number, b:number) {
+export function rgbToHsl(r: number, g: number, b: number) {
   r /= 255;
   g /= 255;
   b /= 255;
@@ -24,25 +24,25 @@ export function RGBToHSL(r:number, g:number, b:number) {
       ? 2 + (b - r) / s
       : 4 + (r - g) / s
     : 0;
-  return [
-    60 * h < 0 ? 60 * h + 360 : 60 * h,
-    100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0),
-    (100 * (2 * l - s)) / 2,
-  ];
+  return {
+    h: 60 * h < 0 ? 60 * h + 360 : 60 * h,
+    s: 100 * (s ? (l <= 0.5 ? s / (2 * l - s) : s / (2 - (2 * l - s))) : 0),
+    l: (100 * (2 * l - s)) / 2,
+  };
 }
-export function HSLToRGB(h:number, s:number, l:number) {
+export function hslToRgb(h: number, s: number, l: number) {
   s /= 100;
   l /= 100;
-  const k = (n) => (n + h / 30) % 12;
+  const k = (n:number) => (n + h / 30) % 12;
   const a = s * Math.min(l, 1 - l);
-  const f = (n) =>
+  const f = (n:number) =>
     l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-  return [255 * f(0), 255 * f(8), 255 * f(4)];
+  return { r: 255 * f(0), g: 255 * f(8), b: 255 * f(4) };
 }
-export function HSLToHexadecimal(h, s, l) {
+export function hslToHex(h:number, s:number, l:number): string {
   l /= 100;
   const a = (s * Math.min(l, 1 - l)) / 100;
-  const f = (n) => {
+  const f = (n:number) => {
     const k = (n + h / 30) % 12;
     const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
     return Math.round(255 * color)
@@ -51,21 +51,23 @@ export function HSLToHexadecimal(h, s, l) {
   };
   return `#${f(0)}${f(8)}${f(4)}`;
 }
-export function rgbaToHexadecimal(r:number = 255, g:number = 255, b:number = 255, a:number = "") {
-  r = r.toString(16);
-  g = g.toString(16);
-  b = b.toString(16);
-  // a = Math.round(a * 255).toString(16);
+export function rgbaToHex(red: number, green: number, blue: number, alpha: number): string {
+  // Convierte cada componente a hexadecimal
+  const redHex = red.toString(16).padStart(2, '0');
+  const greenHex = green.toString(16).padStart(2, '0');
+  const blueHex = blue.toString(16).padStart(2, '0');
 
-  if (r.length == 1) r = "0" + r;
-  if (g.length == 1) g = "0" + g;
-  if (b.length == 1) b = "0" + b;
-  // if (a.length == 1) a = "0" + a;
+  // Convierte el componente alfa a hexadecimal
+  const alphaHex = Math.round(alpha * 255).toString(16).padStart(2, '0');
 
-  return "#" + r + g + b + a;
+  // Une los componentes en un solo valor hexadecimal
+  const hexValue = `#${redHex}${greenHex}${blueHex}${alphaHex}`;
+
+  return hexValue.toUpperCase(); // Opcional: Devuelve en mayúsculas
 }
-export function hexadecimalToHSL(hex) {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+
+export function hexToHSL(colorHexadecimal:string):{h:number,s:number,l:number} {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(colorHexadecimal);
 
   if (!result) {
     throw new Error("Could not parse Hex Color");
@@ -88,7 +90,7 @@ export function hexadecimalToHSL(hex) {
 
   if (max === min) {
     // Achromatic
-    return [h, s, l];
+    return {h, s, l};
   }
 
   const d = max - min;
@@ -112,5 +114,5 @@ export function hexadecimalToHSL(hex) {
   l = Math.round(l);
   h = Math.round(360 * h);
 
-  return [h, s, l];
+  return {h, s, l};
 }
